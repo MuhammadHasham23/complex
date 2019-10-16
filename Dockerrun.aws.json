@@ -1,0 +1,43 @@
+{
+	"AWSEBDockerrunVersion": 2,
+	"containerDefinitions": [
+		{
+			"name": "client",
+			"image": "muhammadhasham2311/multi-client",
+			"hostname": "client",
+			"essential": false
+		},
+		{
+			"name": "server",
+			"image": "muhammadhasham2311/multi-server",
+			"hostname": "api",
+			"essential": false
+		},
+		{
+			"name": "worker",
+			"image": "muhammadhasham2311/multi-worker",
+			"hostname": "worker",
+			"essential": false
+		},
+		{
+			"name": "nginx",
+			"image": "muhammadhasham2311/multi-worker",
+			"hostname": "nginx",
+			"essential": true,
+			"postMappings": [
+				{
+					"hostPort": 80,
+					"containerPort": 80
+				}
+			],
+			"links": ["client", "server"]
+		}
+	]
+}
+//hostname is automatically added in docker-compose but in aws json we have to mention that explictly.
+//by giving a hostname it gets to that container as in nginx default.conf.
+//essential true means that if this container crashes all other container will be shutdown as well.
+//one container should be marked as essential.
+//hostPort is port of machine and containerPort is of container.
+//links are unidirectional to form a connection from nginx to server and client. The server and client
+//are the hostnames of other two containers in this file.
