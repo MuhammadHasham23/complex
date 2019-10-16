@@ -3,26 +3,19 @@ services:
     - docker
 
 before_install:
-    #runs before tests
-    - docker build -t muhammadhasham2311/react-test -f ./client/Dockerfile.dev ./client
-    # docker build -t tag -f dockerfilename dockerfiledir
-scripts:
-    #primary tests running section
-    - docker run muhammadhasham2311/react-test npm test -- --coverage
-    #coverage makes sure that the test suite exists because npm test does not exit it is in watch mode.
+    - docker build -t muhammadhasham2311/complex -f ./client/Dockerfile.dev ./client/
+
+script:
+    - docker run muhammadhasham2311/complex npm test -- --coverage
+
 after_success:
     - docker build -t muhammadhasham2311/multi-client ./client
-    #not adding the dockerfilename just context because the Dockerfile is there.
     - docker build -t muhammadhasham2311/multi-nginx ./nginx
-    - docker build -t muhammadhasham2311/multi-server ./worker
-    - docker build -t muhammadhasham2311/multi-worker ./server
-#Set environment variables in Travis CI setup
-#Login to Docker CLI
-- echo "$DOCKER_PASSWORD | docker login -u "$DOCKER_ID" --password-stdin
-#Take those images and push them to docker hub
-- docker push muhammadhasham2311/multi-client
-- docker push muhammadhasham2311/multi-nginx
-- docker push muhammadhasham2311/multi-server
-- docker push muhammadhasham2311/multi-worker.
+    - docker build -t muhammadhasham2311/multi-server ./server
+    - docker build -t muhammadhasham2311/multi-worker ./worker
 
-#Pushing images to docker hub successfull.
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+    - docker push muhammadhasham2311/multi-client
+    - docker push muhammadhasham2311/multi-nginx
+    - docker push muhammadhasham2311/multi-server
+    - docker push muhammadhasham2311/multi-worker
